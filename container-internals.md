@@ -247,14 +247,15 @@ misc
 Run `lscgroup` to list all `cgroups`
 
 ```shell
-lscgroup
+lscgroup | grep cpu
 ```
 
 Focus on `cpu,cpuacct`
 
 ```
-......
+cpuset:/
 cpu,cpuacct:/
+cpu,cpuacct:/cpulimit
 cpu,cpuacct:/sys-fs-fuse-connections.mount
 cpu,cpuacct:/sys-kernel-config.mount
 cpu,cpuacct:/sys-kernel-debug.mount
@@ -263,6 +264,10 @@ cpu,cpuacct:/user.slice
 cpu,cpuacct:/sys-kernel-tracing.mount
 cpu,cpuacct:/init.scope
 cpu,cpuacct:/system.slice
+cpu,cpuacct:/system.slice/system-systemd\x2dfsck.slice
+cpu,cpuacct:/system.slice/open-vm-tools.service
+cpu,cpuacct:/system.slice/containerd.service
+cpu,cpuacct:/system.slice/systemd-networkd.service
 ......
 ```
 
@@ -281,7 +286,7 @@ Install `stress-ng` on the host to stress the CPU (CPU hogs). More on `stress-ng
 sudo apt install stress-ng
 ```
 
-Verify the `cpu.cfs_quota_us` value of `cpulimited` `cgroup`. Run the stress test without CPU limit.
+Set the `cpu.cfs_quota_us` value of to -1 (unlimited). Run `cgexec` to launch the stress test processes in the manually created  `cpulimited` `cgroup`.
 
 ```shell
 sudo cgset -r cpu.cfs_quota_us=-1 cpulimited
