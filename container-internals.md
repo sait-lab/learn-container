@@ -335,6 +335,8 @@ Docker (`runc`) uses `cgroups` to put a limit on how much resources a container 
 
 https://docs.docker.com/config/containers/resource_constraints/
 
+
+
 ##### Use `--cpu-shares` 
 
 > Set this flag to a value greater or less than the default of 1024 to increase or reduce the container's weight, and give it access to a greater or lesser proportion of the host machine's CPU cycles. This is only enforced when CPU cycles are constrained. When plenty of CPU cycles are available, all containers use as much CPU as they need. In that way, this is a soft limit.
@@ -378,6 +380,15 @@ htop
 
 ![cpu-shares](./container-internals.assets/cpu-shares.webp) 
 
+The CPU usage of the containers is determined by the `--cpu-shares` argument in the `docker run` command. In this case:
+
+- The first container has a `--cpu-shares` value of 256, which means it can use up to 100% of the available CPU resources.
+- The second container has a `--cpu-shares` value of 768, which means it can use up to 300% of the available CPU resources.
+
+The CPU share allocated to each container is proportional to the `--cpu-shares` value specified in the `docker run` command.
+
+
+
 ##### Use `--cpus=<value>`
 
 `--cpus=<value>` specifies how much of the available CPU resources a container can use.
@@ -408,7 +419,9 @@ htop
 
 This experiment shows that by default, a container has no resource constraints and can use as much of a given resource as the host's kernel scheduler allows.
 
-Exit the container. Run a container with resource constraints. `--cpus="0.25"` guarantees the container at most 25% of the CPU every second.
+Exit the container.
+
+Run a container with resource constraints. `--cpus="0.25"` guarantees the container at most 25% of the CPU every second.
 
 ```shell
 docker run --cpus="0.25" -it alpine
@@ -431,3 +444,4 @@ htop
 
 ![container-with-cpu-limit](./container-internals.assets/container-with-cpu-limit.webp) 
 
+For `docker run --cpus="0.25"` on a 4 CPU VM, the `--cpus="0.25"` limits the container to 1 CPU (25% of 4 CPUs).
