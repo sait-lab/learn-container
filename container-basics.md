@@ -373,6 +373,10 @@ The main components of the Docker engine include the Docker daemon, the build sy
 
 Credit: [Docker - Engine | i2tutorials](https://www.i2tutorials.com/docker-tutorial/docker-engine/)
 
+![docker-engine-arch-2](./container-basics.assets/docker-engine-arch-2.webp) 
+
+Credit: https://iximiuz.com/en/posts/container-learning-path/
+
 ### Under the Hood of `docker run`
 
 [UNDERSTANDING DOCKER. 1 — INTRODUCTION : | by B.R.O.L.Y | Medium](https://medium.com/@ridwaneelfilali/docker-explained-86987249ad25)
