@@ -1,8 +1,10 @@
 ## Learn Container
 
-This repository serves as a hands-on learning document of container technologies.
+This repository serves as hands-on learning documents of container technologies.
 
 You are encouraged to use the discussions feature of this repository to ask questions.
+
+![use-discussions](./README.assets/use-discussions.webp) 
 
 
 

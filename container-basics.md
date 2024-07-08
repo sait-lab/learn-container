@@ -4,10 +4,14 @@
 
 [How Shipping Containers Revolutionized Global Trade](https://www.linkedin.com/pulse/how-shipping-containers-revolutionized-global-trade-david-conway-ycwyc)
 
+
+
 Table of Contents
-=================
+-----------------
 
 * [Container Basics](#container-basics)
+   * [Containers vs Virtual Machines](#containers-vs-virtual-machines)
+   * [What Problems Do Containers Solve?](#what-problems-do-containers-solve)
    * [Installing Docker](#installing-docker)
    * [Docker Concepts](#docker-concepts)
       * [What is a container?](#what-is-a-container)
@@ -49,12 +53,42 @@ Table of Contents
          * [Volume versus bind mounts](#volume-versus-bind-mounts)
          * [Sharing files between a host and container](#sharing-files-between-a-host-and-container)
          * [File permissions for Docker access to host files](#file-permissions-for-docker-access-to-host-files)
-   * [Docker Compose](#docker-compose)
-* [License](#license)
 
 
 
 ---
+
+
+
+## Containers vs Virtual Machines
+
+![containers-vs-vms](./container-basics.assets/containers-vs-vms.webp) 
+
+Credit: [Virtual Machines (VMs) vs Containers: What’s The Difference? – BMC Software | Blogs](https://www.bmc.com/blogs/containers-vs-virtual-machines/)
+
+Read [Containers vs Virtual Machines | Atlassian](https://www.atlassian.com/microservices/cloud-computing/containers-vs-vms)
+
+
+
+## What Problems Do Containers Solve?
+
+Excerpt from [How Kubernetes Reinvented Virtual Machines (in a good sense) (iximiuz.com)](https://iximiuz.com/en/posts/kubernetes-vs-virtual-machines/)
+
+> Back in the day, it was pretty common to have **different production and development environments**. That would lead to situations when an app might work locally on your stuffed Debian machine but fail to start on vanilla CentOS in production due to a missing dependency. Conversely, you may have quite some trouble installing the app's dependencies locally, but running a pre-provisioned virtual machine per service for development would be infeasible due to high resource requirements.
+>
+> The massiveness of virtual machines was a problem even in production. Having a virtual machine per service might lead to **lower than optimal resource utilization** and/or sizable **storage and compute overhead**, but putting multiple services into one box could make them conflict. The **multi-minute startup time** could also use some improvement.
+>
+> The world obviously needed a more lightweight version of the box.
+>
+> And that's where The Containers came in. Much like VMs that allowed slicing a bare-metal server into several smaller (and cheaper) machines, containers split a single Linux box into tens or even hundreds of isolated environments.
+>
+> From within a container, it may feel like you've got a virtual machine of your own, with your favorite Linux distro. Well, at least at first sight. And from the outside, containers were just regular processes running on the host operating system and **sharing its kernel**.
+>
+> The ability to pack an application with all its dependencies, including a certain version of the OS userland and libraries, ship it as a container image, and run in a standardized execution environment wherever Docker (or alike) is installed **greatly improved the reproducibility of workloads**.
+>
+> Due to the lightweight implementation of the container boundaries, the computational **overhead got significantly reduced**, allowing a single production server to run tens of different containers potentially belonging to several (micro)services. At the expense of the reduced security, of course.
+>
+> The image **storage and distribution also became more efficient**, thanks to the immutable and shared image layers.
 
 
 
@@ -1478,31 +1512,3 @@ $ docker run -v HOST-DIRECTORY:/CONTAINER-DIRECTORY:rw nginx
 ```
 
 Read-only bind mounts let the container access the mounted files on the host for reading, but it can't change or delete the files. With read-write bind mounts, containers can modify or delete mounted files, and these changes or deletions will also be reflected on the host system. Read-only bind mounts ensures that files on the host can't be accidentally modified or deleted by a container.
-
-
-
-## Docker Compose
-
-Excerpt from [Docker Compose overview | Docker Docs](https://docs.docker.com/compose/)
-
-> Docker Compose is a tool for defining and running multi-container applications. It is the key to unlocking a streamlined and efficient development and deployment experience.
->
-> Compose simplifies the control of your entire application stack, making it easy to manage services, networks, and volumes in a single, comprehensible YAML configuration file. Then, with a single command, you create and start all the services from your configuration file.
->
-> Compose works in all environments; production, staging, development, testing, as well as CI workflows. It also has commands for managing the whole lifecycle of your application:
->
-> - Start, stop, and rebuild services
-> - View the status of running services
-> - Stream the log output of running services
-> - Run a one-off command on a service
-
-<details>
-  <summary>Install Docker Compose</summary>
-  https://docs.docker.com/compose/install/linux/ <br>
-  https://docs.docker.com/compose/install/standalone/
-</details>
-https://docs.docker.com/compose/gettingstarted/
-
-[Samples of Docker Compose applications with multiple integrated services](https://github.com/docker/awesome-compose#samples-of-docker-compose-applications-with-multiple-integrated-services)
-
-
