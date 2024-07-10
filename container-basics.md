@@ -997,8 +997,9 @@ Container read scenarios:
 Container write scenarios:
 
 1. The first time a container writes to an existing file, that file does not exist in the container (`upperdir`). The `overlay2` driver performs a `copy_up` operation to copy the file from the image (`lowerdir`) to the container (`upperdir`). The container then writes the changes to the new copy of the file in the container layer.
+   
    <img src="./container-basics.assets/overlayfs-writes-1.jpg" alt="overlayfs-writes-1" style="zoom:33%;" />  
-
+   
 2. Deleting files and directories
 
    - When a *file* is deleted within a container, a *whiteout* file is created in the container (`upperdir`). The version of the file in the image layer (`lowerdir`) is not deleted (because the `lowerdir` is read-only). However, the whiteout file prevents it from being available to the container.

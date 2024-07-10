@@ -331,7 +331,7 @@ Create two long running processes and show the processes inside the container.
 ```shell
 # These commands run inside the container
 sleep 3600 &
-sleep 3600 &
+sleep 3601 &
 ps aux
 ```
 
