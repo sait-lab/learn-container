@@ -651,4 +651,4 @@ htop
 
 ![container-with-cpu-limit](./container-internals.assets/container-with-cpu-limit.webp) 
 
-For `docker run --cpus="0.25"` on a 4 CPU VM, the `--cpus="0.25"` limits the container to 1 CPU (25% of 4 CPUs).
+For `docker run --cpus="0.25"` on a 4 CPU VM, the `--cpus="0.25"` limits the container to 0.25 CPU (6.25% of 4 CPUs).
