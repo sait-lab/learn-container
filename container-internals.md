@@ -38,6 +38,209 @@ DESCRIPTION
        section for more details.
 ```
 
+[The 7 most used Linux namespaces](https://www.redhat.com/sysadmin/7-linux-namespaces): https://www.redhat.com/sysadmin/7-linux-namespaces
+
+> [!NOTE]
+>
+> The following demonstrations use `unshare` command to run program in new namespaces. 
+>
+> [unshare(1) — Linux manual page](https://man7.org/linux/man-pages/man1/unshare.1.html)
+
+
+
+#### User/UID namespace on Linux
+
+Excerpt from https://kubernetes.io/docs/concepts/workloads/pods/user-namespaces/
+
+>A user namespace isolates the user running inside the container from the one in the host.
+>
+>A process running as root in a container can run as a different (non-root) user in the host; in other words, the process has full privileges for operations inside the user namespace, but is unprivileged for operations outside the namespace.
+
+Create a new user `alice` with home directory `/home/alice`. Create a `/home/alice/you-can-see-me` file that only `alice` has `rw` access.
+
+```shell
+# These commands run on the host/root user namespace
+sudo userdel -r alice
+sudo useradd -m alice
+sudo touch /home/alice/you-can-see-me
+sudo chown alice:alice /home/alice/you-can-see-me
+sudo chmod 600 /home/alice/you-can-see-me
+sudo ls -l /home/alice/
+```
+
+![create-user-alice](./container-internals.assets/create-user-alice.png) 
+
+This User/UID namespace demonstration is based on https://blog.quarkslab.com/digging-into-linux-namespaces-part-2.html
+
+Impersonate user `alice`, display the `uid` and `gid` of `alice`, and check the ownership of `/home/alice/you-can-see-me` file.
+
+```shell
+# These commands run on the host/root user namespace
+sudo su alice
+```
+
+```shell
+# These commands run on the host/root user namespace
+cd /home/alice
+id
+ls -l /home/alice
+```
+
+Create a new user namespace:
+
+```shell
+# These commands run on the host/root user namespace
+unshare -U /bin/bash
+```
+
+> [!NOTE]
+>
+> Starting with Linux 3.8 (and unlike the flags used for creating other types of namespaces), on some Linux distributions, no privilege is required to create a user namespace.
+
+Run `id` command to display the `uid` and `gid` inside the new user namespace,  check the ownership of `/home/alice/you-can-see-me` file again.
+
+```shell
+# These commands run inside the new user namespace
+id
+ls -l /home/alice
+```
+
+It appears that the shell running in the new user namespace believes current user is `nobody` and the `/home/alice/you-can-see-me` file is owned by `nobody:nogroup`.
+
+> In the new user namespace our process belongs to user `nobody` with effective UID=65334, which is not present in the system. Okay, but where does it come from and how does the OS resolve it when it comes to system wide operations (modifying files, interacting with programs)? According to the Linux documentation it’s predefined in a file:
+>
+> If a user ID has no mapping inside the namespace, then system calls that return user IDs return the value defined in the file /proc/sys/kernel/overflowuid, which on a standard system defaults to the value 65534. Initially, a user namespace has no user ID mapping, so all user IDs inside the namespace map to this value.
+
+Start a new SSH session and connect to the same host. Use `lsns` command to show the new user namespace.
+
+```shell
+# This command runs on the host/root user namespace
+sudo lsns | grep user
+```
+
+![new-user-ns](./container-internals.assets/new-user-ns.webp) 
+
+>Some processes need to run under effective UID 0 in order to provide their services and be able to interact with the OS file system. One of the most common things when using user namespaces is to define mappings. This is done using the `/proc/<PID>/uid_map` and `/proc/<PID>/gid_map` files. The format is the following:
+>
+>ID-inside-ns ID-outside-ns length
+>
+>*ID-inside-ns (resp.ID-outside-ns)* defines the starting point of UID mapping inside the user namespace (resp. outside of the user namespace) and length defines the number of subsequent UID (resp. GID) mappings. The mappings are applied when a process within a USER namespace tries to manipulate system resources belonging to another USER namespace.
+
+Let's map user `alice` in the root user namespace to user `root` in the new user namespace. From the output of `sudo lsns | grep user` or `ps aux | grep /bin/bash`, the `PID` of `/bin/bash` is 16141.
+
+```shell
+# These commands run on the host/root user namespace
+sudo lsns | grep user
+# Note the PID of alice's /bin/bash process
+echo "0 1002 65335" | sudo tee /proc/16141/uid_map
+echo "0 1003 65335" | sudo tee /proc/16141/gid_map
+```
+
+Go back to the new user namespace, display the `uid` and `gid` of `alice`, and check the ownership of `/home/alice/you-can-see-me` file.
+
+```shell
+# These commands run inside the new user namespace
+id
+ls -l /home/alice
+```
+
+It appears that the shell running in the new user namespace believes current user is `root` and the `/home/alice/you-can-see-me` file is owned by `root:root`.
+
+If you create a new file in the new user namespace, it appears the owner of the file is `root:root`.
+
+```shell
+# These commands run inside the new user namespace
+touch /home/alice/hello-from-inside-uid-ns
+ls -l /home/alice
+```
+
+When you check the ownership in the root user namespace, the file is owned by `alice:alice` since the user `alice` on the host has been mapped to user `root` in the new user namespace.
+
+```shell
+# This command runs on the host/root user namespace
+sudo ls -l /home/alice
+```
+
+![uid-gid-mapping](./container-internals.assets/uid-gid-mapping.webp) 
+
+> [!NOTE]
+>
+> The `unshare -U` command has an option `--map-user=uid|name` to run the program only after the current effective user ID has been mapped to uid. `--map-root-user` is equvilent of `--map-user=0`.
+
+Here is an illustration of the above `uid` and `gid` mapping.
+
+![uid-mapping-diag](./container-internals.assets/uid-mapping-diag.webp) 
+
+
+
+
+#### UTS namespace on Linux
+
+Create a UTS namespace:
+
+```shell
+sudo unshare --fork --mount --uts /bin/bash
+```
+
+Change the hostname inside the namespace.
+
+```shell
+# Inside the forked /bin/bash
+mount -t tmpfs tmpfs /run
+hostname uts-demo
+```
+
+> [!NOTE]
+>
+> [hostname(1) — Linux manual page](https://man7.org/linux/man-pages/man1/hostname.1.html)
+>
+> [How to configure a hostname on a Linux system](https://www.redhat.com/sysadmin/configure-hostname-linux)
+
+When you run `hostname` command inside the forked `/bin/bash` in its own namespace, it shows the hostname is `uts-demo`.
+
+![create-uts-ns](./container-internals.assets/create-uts-ns.png) 
+
+Start a new SSH session and connect to the same host. Use `hostname` command to display the system's hostname. It's still the same.
+
+```shell
+# In the new shell of the host
+hostname
+```
+
+Run `lsns` on the Linux host to list information about all UTS namespaces. Note the `pid` of `unshare --fork --mount --uts /bin/bash`
+
+```shell
+# In the new shell of the host
+sudo lsns | grep uts
+```
+
+Enter the created namespace with `nsenter` command.
+
+> [!NOTE]
+>
+> [nsenter(1) — Linux manual page](https://man7.org/linux/man-pages/man1/nsenter.1.html)
+
+```shell
+# In the new shell of the host
+sudo nsenter -t <PID_IN_LSNS_GREP_UTS> -a
+```
+
+Show the hostname inside the namespace.
+
+```shell
+# Inside the created uts namespace
+hostname
+```
+
+Exit the namespace and show the hostname again.
+
+```shell
+# In the new shell of the host
+hostname
+```
+
+![uts-hostname-show](./container-internals.assets/uts-hostname-show.webp) 
+
 
 
 #### Process ID (PID) namespace on Linux
@@ -114,7 +317,7 @@ sudo lsns -t pid
 
 
 
-#### Observe Container and Namespaces
+#### Observe Namespaces of a Running Container
 
 Start a container on the host and start an interactive terminal (enter the shell of the container):
 
@@ -183,6 +386,10 @@ With the help of `cgroups`, `runc` is able to share available hardware resources
 ![diag-cgroup](./container-internals.assets/diag-cgroup.webp) 
 
 Credit: Nginx blogs
+
+> [!NOTE]
+>
+> [Managing cgroups with systemd](https://www.redhat.com/sysadmin/cgroups-part-four)
 
 ####  `cpu` subsystem of  `cgroups` on Linux
 
