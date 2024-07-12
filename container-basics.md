@@ -1062,7 +1062,7 @@ Follow the instructions https://docs.docker.com/guides/docker-concepts/building-
 
    - Define the working directory by using the `WORKDIR` instruction. This will specify where future commands will run and the directory files will be copied inside the container image.
      ```
-     WORKDIR /usr/local/app
+     WORKDIR /app
      ```
 
    - Copy all of the files from your project on your machine into the container image by using the `COPY` instruction:

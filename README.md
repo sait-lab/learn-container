@@ -4,9 +4,7 @@ This repository serves as hands-on learning documents of container technologies.
 
 You are encouraged to use the discussions feature of this repository to ask questions.
 
-![use-discussions](./README.assets/use-discussions.webp) 
-
-
+![use-discussions](./README.assets/use-discussions.webp)
 
 ## Documents
 
@@ -14,19 +12,13 @@ Below are the links to the documents available in this repository. Each link pro
 
 ### 1. [Container Basics](container-basics.md)
 
-
 ### 2. [Docker Storage](docker-storage.md)
-
 
 ### 3. [Docker Networking](docker-networking.md)
 
-
 ### 4. [Docker Compose](docker-compose.md)
 
-
 ### 5. [Container Internals](container-internals.md)
-
-
 
 ## License
 
