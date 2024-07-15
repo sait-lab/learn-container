@@ -46,7 +46,7 @@ Excerpt from [Persisting container data | Docker Docs](https://docs.docker.com/g
 
 Let's run a container and create a `/file1.txt` file inside it.
 
-```
+```shell
 # This command runs on the host
 docker run --name demo-container -it alpine
 
@@ -57,9 +57,9 @@ echo 'hello docker' > /file1.txt
 
 Inspect the `GraphDrive` on the host:
 
-```
+```shell
 # This command runs on the host
-sudo docker inspect demo-container | jq .[0].GraphDriver.Data
+sudo docker inspect demo-container | jq ".[0].GraphDriver.Data"
 ```
 
 It shows the OverlayFS info similar to this:
@@ -72,9 +72,7 @@ It shows the OverlayFS info similar to this:
 }
 ```
 
-`UpperDir` is the read-write layer where changes are written. The `/file1.txt` file created inside the container can be located at `UpperDir`.
-
-![inspect-upperdir](./docker-storage.assets/inspect-upperdir.png) 
+`UpperDir` is the read-write layer where changes are written. The `/file1.txt` file created inside the container can be located at `UpperDir`. ![inspect-upperdir](./docker-storage.assets/inspect-upperdir.webp) 
 
 If you modify files in `UpperDir` on the host, the running container will immediately detect these changes.
 
@@ -262,5 +260,4 @@ Excerpt from https://docs.docker.com/storage/storagedriver/select-storage-driver
 | RHEL               | `overlay2`                  | `vfs`               |
 
 > When in doubt, the best all-around configuration is to **use a modern Linux distribution with a kernel that supports the `overlay2` storage driver**, and to **use Docker volumes** for write-heavy workloads instead of relying on writing data to the container's writable layer.
-
 
