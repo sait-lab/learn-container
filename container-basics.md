@@ -1079,7 +1079,13 @@ Follow the instructions https://docs.docker.com/guides/docker-concepts/building-
      ```
      CMD ["node", "./src/index.js"]
      ```
-
+> [!NOTE]  
+>
+> The `CMD` instruction sets the command to be executed when running a container from an image.
+>
+> An `ENTRYPOINT` allows you to configure a container that will run as an executable.
+>
+> Read [Dockerfile reference](https://docs.docker.com/reference/dockerfile/) and [Choosing Between RUN, CMD, and ENTRYPOINT](https://www.docker.com/blog/docker-best-practices-choosing-between-run-cmd-and-entrypoint/)
 ### Build, tag, and publish an image
 
 Excerpt from [Build, tag, and publish an image | Docker Docs](https://docs.docker.com/guides/docker-concepts/building-images/build-tag-and-publish-an-image/)
