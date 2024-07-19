@@ -192,6 +192,16 @@ The `web_content` volume still persists on the host after removal of all contain
 
 ![vol-persists-after-rm-contianer](./docker-storage.assets/vol-persists-after-rm-contianer.png) 
 
+Mount the `web_content` volume to an Nginx container's `/usr/share/nginx/html/` directory to serve the static `index.html` file.
+
+```shell
+# These commands run on the host
+docker run --rm -itd -p 8000:80 --name web-server-3 -v web_content:/usr/share/nginx/html/ nginx:latest
+curl http://127.0.0.1:8000
+```
+
+![vol-web-content-nginx](./docker-storage.assets/vol-web-content-nginx.webp) 
+
 If you need to share volumes among containers running on different hosts, shared filesystems like Ceph, GlusterFS,  and Network File System (NFS) can be used to set up a distributed filesystem across each host that runs Docker containers. By having a consistent naming convention and a unified namespace, all containers can access the durable storage backend, regardless of the host they are deployed from.
 
 Volumes are the preferred way to persist data in Docker containers and services. Some use cases for volumes include:
