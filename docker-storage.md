@@ -34,7 +34,7 @@ Containers are inherently ephemeral. For running stateful workloads like databas
 
 ### Life Cycle of Read-Write Layers
 
-Read [OverlayFS](https://github.com/sait-lab/container-basics?tab=readme-ov-file#overlayfs) and [Deep Dive into Docker Internals - Union Filesystem](https://martinheinz.dev/blog/44)
+Read [OverlayFS](container-basics.md#overlayfs) and [Deep Dive into Docker Internals - Union Filesystem](https://martinheinz.dev/blog/44)
 
 Excerpt from [Persisting container data | Docker Docs](https://docs.docker.com/guides/docker-concepts/running-containers/persisting-container-data/)
 
