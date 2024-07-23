@@ -26,7 +26,27 @@ Excerpt from [Networking overview | Docker Docs](https://docs.docker.com/network
 
 ### Default Bridge Network
 
-Run the demos on [Networking with standalone containers | Docker Docs](https://docs.docker.com/network/network-tutorial-standalone/)
+> This tutorial demonstrates how to use the default `bridge` network that Docker sets up for you automatically. This network is not the best choice for production systems.
+
+Run the demos on [Networking with standalone containers | Docker Docs](https://docs.docker.com/network/network-tutorial-standalone/#use-the-default-bridge-network)
+
+
+
+---
+
+
+
+### User-defined Bridge Networks
+
+>This tutorial shows how to create and use your own custom bridge networks, to connect containers running on the same Docker host. This is recommended for standalone containers running in production.
+
+Run the demos on [Use user-defined bridge networks | Docker Docs](https://docs.docker.com/network/network-tutorial-standalone/#use-user-defined-bridge-networks)
+
+![user-defined-bridge](./docker-networking.assets/user-defined-bridge.webp) 
+
+ 
+
+Topology of user-defined bridge networks demo.
 
 
 
@@ -35,6 +55,8 @@ Run the demos on [Networking with standalone containers | Docker Docs](https://d
 
 
 ### Host Network
+
+>This tutorial deals with networking standalone containers which bind directly to the Docker host's network, with no network isolation.
 
 Run the demos on [Networking using the host network | Docker Docs](https://docs.docker.com/network/network-tutorial-host/)
 
