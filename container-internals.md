@@ -522,6 +522,7 @@ Set `cpu.cfs_quota_us=200000` to allow a process to fully utilize two CPUs. Run 
 ```shell
 sudo cgset -r cpu.cfs_quota_us=200000 cpulimited
 cgget -r cpu.cfs_quota_us cpulimited
+sudo cgexec -g cpu:cpulimited stress-ng --matrix 0 -t 1m
 ```
 
 ![stress-with-2cpu](./container-internals.assets/stress-with-2cpu.webp) 
